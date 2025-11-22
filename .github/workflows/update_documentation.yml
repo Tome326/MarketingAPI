@@ -1,0 +1,32 @@
+name: Generate OpenAPI Spec
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  generate-spec:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+    
+    - name: Install Swashbuckle CLI
+      run: dotnet tool install -g Swashbuckle.AspNetCore.Cli
+    
+    - name: Build
+      run: dotnet build
+    
+    - name: Generate OpenAPI spec
+      run: swagger tofile --output docs/swagger.json ./bin/Debug/net8.0/YourApp.dll v1
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: openapi-spec
+        path: docs/swagger.json
