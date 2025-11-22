@@ -43,7 +43,7 @@ public class UsersController(ApplicationDbContext context, ILogger<UsersControll
     [HttpGet]
     public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers()
     {
-        var users = await _context.Users.Select(u => new UserDto
+        List<UserDto> users = await _context.Users.Select(u => new UserDto
         {
             Id = u.Id,
             Username = u.Username,
