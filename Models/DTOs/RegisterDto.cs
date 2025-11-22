@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MarketingAPI.Models.DTOs;
 
+/// <summary>
+/// Data transfer object for the Registration request
+/// </summary>
 public class RegisterDto
 {
     /// <summary>

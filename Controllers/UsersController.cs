@@ -8,6 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MarketingAPI.Controllers;
 
+/// <summary>
+/// Main controller for the API
+/// </summary>
+/// <param name="context">Database context</param>
+/// <param name="logger">Main logger</param>
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
@@ -16,6 +21,10 @@ public class UsersController(ApplicationDbContext context, ILogger<UsersControll
     private readonly ApplicationDbContext _context = context;
     private readonly ILogger<UsersController> _logger = logger;
 
+    /// <summary>
+    /// Gets the current user
+    /// </summary>
+    /// <returns>The user DTO based on the token given.</returns>
     [HttpGet("me")]
     public async Task<ActionResult<UserDto>> GetCurrentUser()
     {
@@ -40,6 +49,10 @@ public class UsersController(ApplicationDbContext context, ILogger<UsersControll
         return Ok(userDto);
     }
 
+    /// <summary>
+    /// Gets all registered users
+    /// </summary>
+    /// <returns>A list of registered users</returns>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers()
     {
@@ -55,6 +68,12 @@ public class UsersController(ApplicationDbContext context, ILogger<UsersControll
 
         return Ok(users);
     }
+
+    /// <summary>
+    /// Gets a user based on the given Id
+    /// </summary>
+    /// <param name="id">The id of the user to get</param>
+    /// <returns>The user DTO based on the id.</returns>
     [HttpGet("{id}")]
     public async Task<ActionResult<UserDto>> GetUser(int id)
     {
@@ -75,6 +94,11 @@ public class UsersController(ApplicationDbContext context, ILogger<UsersControll
         return Ok(userDto);
     }
 
+    /// <summary>
+    /// Deletes a user based on the Id
+    /// </summary>
+    /// <param name="id">The id of the user to delete</param>
+    /// <returns>No Content</returns>
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {

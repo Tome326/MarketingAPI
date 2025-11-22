@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MarketingAPI.Models.DTOs;
 
+/// <summary>
+/// Data transfer object for the Login request
+/// </summary>
 public class LoginDto
 {
     /// <summary>

@@ -22,6 +22,11 @@ DELETE api/customer/by_email/{email}: Deletes a customer's information based on 
 ===============================================================================================================================
 */
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="context"></param>
+/// <param name="logger"></param>
 [ApiController]
 [Route("api/[controller]")]
 public class CustomersController(ApplicationDbContext context, ILogger<CustomersController> logger) : ControllerBase
@@ -29,6 +34,11 @@ public class CustomersController(ApplicationDbContext context, ILogger<Customers
     private readonly ApplicationDbContext _context = context;
     private readonly ILogger<CustomersController> _logger = logger;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="customerDto"></param>
+    /// <returns></returns>
     [HttpPost]
     [AllowAnonymous]
     public async Task<ActionResult> AddUser([FromBody] CustomerDto customerDto)
@@ -57,6 +67,10 @@ public class CustomersController(ApplicationDbContext context, ILogger<Customers
         return Ok();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     [Authorize]
     public async Task<ActionResult<IEnumerable<CustomerDto>>> GetAllCustomers()
@@ -74,6 +88,11 @@ public class CustomersController(ApplicationDbContext context, ILogger<Customers
         return Ok(customers);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet("{id}")]
     [Authorize]
     public async Task<ActionResult<CustomerDto>> GetCustomerById(int id)
@@ -95,6 +114,11 @@ public class CustomersController(ApplicationDbContext context, ILogger<Customers
         return Ok(customerDto);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="email"></param>
+    /// <returns></returns>
     [HttpGet("by_email/{email}")]
     [Authorize]
     public async Task<ActionResult<CustomerDto>> GetCustomerByEmail(string email)
@@ -116,6 +140,11 @@ public class CustomersController(ApplicationDbContext context, ILogger<Customers
         return Ok(customerDto);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpDelete("{id}")]
     [Authorize]
     public async Task<ActionResult> DeleteCustomerById(int id)
@@ -132,6 +161,11 @@ public class CustomersController(ApplicationDbContext context, ILogger<Customers
         return NoContent();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="email"></param>
+    /// <returns></returns>
     [HttpDelete("by_email/{email}")]
     [Authorize]
     public async Task<ActionResult<CustomerDto>> DeleteCustomerByEmail(string email)

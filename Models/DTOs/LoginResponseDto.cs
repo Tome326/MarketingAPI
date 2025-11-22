@@ -1,5 +1,8 @@
 namespace MarketingAPI.Models.DTOs;
 
+/// <summary>
+/// Data transfer object for the Login response
+/// </summary>
 public class LoginResponseDto
 {
     /// <summary>

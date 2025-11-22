@@ -1,5 +1,8 @@
 namespace MarketingAPI.Models.DTOs;
 
+/// <summary>
+/// Data transfer object for the User request
+/// </summary>
 public class UserDto
 {
     /// <summary>

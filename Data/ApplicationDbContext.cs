@@ -3,13 +3,31 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MarketingAPI.Data;
 
+/// <summary>
+/// 
+/// </summary>
 public class ApplicationDbContext : DbContext
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="options"></param>
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
-    
+
+    /// <summary>
+    /// 
+    /// </summary>
     public DbSet<User> Users { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
     public DbSet<Customer> Customers { get; set; }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="modelBuilder"></param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

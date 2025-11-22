@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MarketingAPI.Models.DTOs;
 
+/// <summary>
+/// Data Transfer Object for the customer information.
+/// </summary>
 public class CustomerDto
 {
     /// <summary>

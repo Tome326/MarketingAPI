@@ -7,11 +7,20 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 namespace MarketingAPI;
 
+/// <summary>
+/// Main Program class
+/// </summary>
 public class Program
 {
+    /// <summary>
+    /// Main Method
+    /// </summary>
+    /// <param name="args"></param>
+    /// <exception cref="InvalidOperationException"></exception>
     public static void Main(string[] args)
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -58,6 +67,23 @@ public class Program
                 policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
             });
         });
+
+    builder.Services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", new OpenApiInfo { Title = "MarketingAPI", Version = "v1" });
+
+        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Description = "JWT Authorization header using the Bearer scheme.",
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT"
+        });
+
+        c.OperationFilter<AuthorizeCheckOperationFilter>();
+    });
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();

@@ -7,6 +7,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MarketingAPI.Controllers;
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="context"></param>
+/// <param name="passwordService"></param>
+/// <param name="tokenService"></param>
+/// <param name="logger"></param>
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController(ApplicationDbContext context, IPasswordService passwordService, ITokenService tokenService, ILogger<AuthController> logger) : ControllerBase
@@ -16,6 +23,11 @@ public class AuthController(ApplicationDbContext context, IPasswordService passw
     private readonly ITokenService _tokenService = tokenService;
     private readonly ILogger<AuthController> _logger = logger;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="registerDto"></param>
+    /// <returns></returns>
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registerDto)
     {
@@ -55,6 +67,11 @@ public class AuthController(ApplicationDbContext context, IPasswordService passw
         return CreatedAtAction(nameof(Register), new { id = user.Id }, userDto);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="loginDto"></param>
+    /// <returns></returns>
     [HttpPost("login")]
     public async Task<ActionResult<LoginResponseDto>> Login([FromBody] LoginDto loginDto)
     {
