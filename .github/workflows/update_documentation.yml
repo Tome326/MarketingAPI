@@ -23,7 +23,7 @@ jobs:
       run: dotnet build
     
     - name: Generate OpenAPI spec
-      run: swagger tofile --output docs/swagger.json ./bin/Debug/net9.0/MarketingAPI.dll v1
+      run: swagger tofile --output docs/swagger.json bin/Debug/net9.0/MarketingAPI.dll v1
     
     - name: Upload artifact
       uses: actions/upload-artifact@v4
