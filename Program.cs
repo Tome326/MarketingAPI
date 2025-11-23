@@ -68,37 +68,39 @@ public class Program
             });
         });
 
-    builder.Services.AddSwaggerGen(c =>
-    {
-        c.SwaggerDoc("v1", new OpenApiInfo { Title = "MarketingAPI", Version = "v1" });
-
-        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        builder.Services.AddSwaggerGen(c =>
         {
-            Description = "JWT Authorization header using the Bearer scheme.",
-            Name = "Authorization",
-            In = ParameterLocation.Header,
-            Type = SecuritySchemeType.Http,
-            Scheme = "bearer",
-            BearerFormat = "JWT"
-        });
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "MarketingAPI", Version = "v1" });
 
-        c.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
-                new OpenApiSecurityScheme
+                Description = "JWT Authorization header using the Bearer scheme.",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT"
+            });
+
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
                 {
-                    Reference = new OpenApiReference
+                    new OpenApiSecurityScheme
                     {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                    }
-                },
-                Array.Empty<string>()
-            }
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    Array.Empty<string>()
+                }
+            });
+
+            c.OperationFilter<AuthorizeCheckOperationFilter>();
         });
 
-        c.OperationFilter<AuthorizeCheckOperationFilter>();
-    });
+        builder.WebHost.ConfigureKestrel(options => options.ListenAnyIP(8080));
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
