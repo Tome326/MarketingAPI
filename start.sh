@@ -2,7 +2,7 @@
 set -e
 
 # Configuration
-MAX_WAIT=60  # Maximum seconds to wait
+MAX_WAIT=600  # Maximum seconds to wait
 POLL_INTERVAL=2  # Seconds between checks
 
 echo "=== Starting Tailscale Setup ==="
