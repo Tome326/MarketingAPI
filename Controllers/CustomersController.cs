@@ -4,6 +4,7 @@ using MarketingAPI.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PhoneNumbers;
 
 namespace MarketingAPI.Controllers;
 
@@ -49,14 +50,18 @@ public class CustomersController(ApplicationDbContext context, ILogger<Customers
         if (await _context.Customers.AnyAsync(c => c.Email == customerDto.Email))
             return BadRequest(new { message = "Email already registered" });
 
-        if (await _context.Customers.AnyAsync(c => c.PhoneNumber == customerDto.PhoneNumber))
+        PhoneNumberUtil phoneUtil = PhoneNumberUtil.GetInstance();
+        PhoneNumber phoneNumber = phoneUtil.Parse(customerDto.PhoneNumber, "US");
+        string formattedPhoneNumber = phoneUtil.Format(phoneNumber, PhoneNumberFormat.E164);
+
+        if (await _context.Customers.AnyAsync(_ => formattedPhoneNumber == customerDto.PhoneNumber))
             return BadRequest(new { message = "Phone number already registered" });
 
         Customer customer = new()
         {
             Name = customerDto.Name,
             Email = customerDto.Email,
-            PhoneNumber = customerDto.PhoneNumber,
+            PhoneNumber = formattedPhoneNumber,
             Birthday = customerDto.Birthday,
             Interest = customerDto.Interest,
             AgreeToSms = customerDto.AgreeToSms

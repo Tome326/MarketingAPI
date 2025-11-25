@@ -4,8 +4,6 @@ using MarketingAPI.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Twilio;
-using Twilio.AspNet.Common;
-using Twilio.Converters;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
 
@@ -34,7 +32,7 @@ public class SmsController(ApplicationDbContext context, ILogger<UsersController
     /// <param name="request">The SMS request object.</param>
     /// <returns>Object code result that corresponds to the code send to the client.</returns>
     [HttpPost("send")]
-    public async Task<IActionResult> SendSms([FromBody] SmsRequest request)
+    public async Task<IActionResult> SendSms([FromBody] SmsDto request)
     {
         try
         {
@@ -45,9 +43,9 @@ public class SmsController(ApplicationDbContext context, ILogger<UsersController
             TwilioClient.Init(accountSid, authToken);
 
             MessageResource message = await MessageResource.CreateAsync(
-                to: new PhoneNumber(request.To),
+                to: new PhoneNumber(request.Recipient),
                 from: new PhoneNumber(fromNumber),
-                body: request.Body
+                body: request.Message
             );
 
             _logger.LogInformation($"SMS sent successfully. SID: {message.Sid}");
@@ -149,6 +147,9 @@ public class SmsController(ApplicationDbContext context, ILogger<UsersController
     }
 }
 
+/// <summary>
+/// Results of a message being sent
+/// </summary>
 public struct MessageResult
 {
     public string PhoneNumber { get; set; }
@@ -157,74 +158,3 @@ public struct MessageResult
     public bool Success { get; set; }
     public string Error { get; set; }
 }
-
-/*
-        [HttpPost("send-bulk")]
-        public async Task<IActionResult> SendBulkSms([FromBody] BulkSmsRequest request)
-        {
-            try
-            {
-                var accountSid = _configuration["Twilio:AccountSid"];
-                var authToken = _configuration["Twilio:AuthToken"];
-                var messagingServiceSid = _configuration["Twilio:MessagingServiceSid"];
-
-                TwilioClient.Init(accountSid, authToken);
-
-                var results = new List<MessageResult>();
-
-                // Send to each recipient
-                foreach (var recipient in request.Recipients)
-                {
-                    try
-                    {
-                        var message = await MessageResource.CreateAsync(
-                            body: PersonalizeMessage(request.MessageTemplate, recipient),
-                            messagingServiceSid: messagingServiceSid, // Use Messaging Service instead of "from"
-                            to: new PhoneNumber(recipient.PhoneNumber)
-                        );
-
-                        results.Add(new MessageResult
-                        {
-                            PhoneNumber = recipient.PhoneNumber,
-                            MessageSid = message.Sid,
-                            Status = message.Status.ToString(),
-                            Success = true
-                        });
-
-                        _logger.LogInformation($"Message sent to {recipient.PhoneNumber}: {message.Sid}");
-                    }
-                    catch (Exception ex)
-                    {
-                        results.Add(new MessageResult
-                        {
-                            PhoneNumber = recipient.PhoneNumber,
-                            Success = false,
-                            Error = ex.Message
-                        });
-
-                        _logger.LogError(ex, $"Failed to send message to {recipient.PhoneNumber}");
-                    }
-                }
-
-                return Ok(new
-                {
-                    totalRecipients = request.Recipients.Count,
-                    successful = results.Count(r => r.Success),
-                    failed = results.Count(r => !r.Success),
-                    results = results
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Bulk SMS operation failed");
-                return BadRequest(new { error = ex.Message });
-            }
-        }
-
-        private string PersonalizeMessage(string template, Recipient recipient)
-        {
-            return template
-                .Replace("{name}", recipient.Name)
-                .Replace("{phoneNumber}", recipient.PhoneNumber);
-        }
-*/
