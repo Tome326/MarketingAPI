@@ -4,7 +4,10 @@ using MarketingAPI.Models.DTOs;
 using MarketingAPI.Settings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Twilio.AspNet.Common;
+using Twilio.AspNet.Core;
 using Twilio.Rest.Api.V2010.Account;
+using Twilio.TwiML;
 using Twilio.Types;
 
 namespace MarketingAPI.Controllers;
@@ -130,6 +133,15 @@ public class SmsController(ApplicationDbContext context, ILogger<UsersController
         }
     }
     
+    
+    [HttpPost("sms")]
+    [ValidateRequest]
+    public TwiMLResult ReceiveMessage(SmsRequest dto)
+    {
+        MessagingResponse response = new();
+        return new(response);
+    }
+
     private string ResolveTemplate(string template, Customer customer)
     {
         return template.Replace("{name}", customer.Name);
