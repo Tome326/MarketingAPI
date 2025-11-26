@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Twilio;
 using Twilio.AspNet.Core;
 
 namespace MarketingAPI;
@@ -26,14 +27,14 @@ public class Program
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+        // Add Services
         builder.Services.AddControllers();
-
         builder.Services.AddDatabaseContext(builder.Configuration);
-
         builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         builder.Services.AddScoped<IPasswordService, PasswordService>();
         builder.Services.AddScoped<ITokenService, TokenService>();
 
+        // Handle Authorization
         IConfigurationSection jwtSettings = builder.Configuration.GetSection("JwtSettings");
         string secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured");
 
@@ -55,13 +56,7 @@ public class Program
                 ClockSkew = TimeSpan.Zero
             };
         });
-        // Add services to the container.
         builder.Services.AddAuthorization();
-
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-        builder.Services.AddTwilioClient();
-
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowAll", policy =>
@@ -70,6 +65,32 @@ public class Program
             });
         });
 
+        //Twilio Setup
+        TwilioSettings twilioSettings = new();
+        builder.Configuration.GetSection(TwilioSettings.SectionName).Bind(twilioSettings);
+
+        try
+        {
+            twilioSettings.Validate();
+        }
+        catch (InvalidOperationException e)
+        {
+            Console.WriteLine($"ERROR: {e.Message}");
+            throw;
+        }
+
+        TwilioClient.Init(twilioSettings.AccountSid, twilioSettings.AuthToken);
+        builder.Services.AddSingleton(twilioSettings);
+        builder.Services.Configure<TwilioSettings>(builder.Configuration.GetSection(TwilioSettings.SectionName));
+        builder.Services.AddTwilioClient(options =>
+        {
+            options.AccountSid = twilioSettings.AccountSid;
+            options.AuthToken = twilioSettings.AuthToken;
+        });
+
+        // API Endpoint documentation handling
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
         builder.Services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "MarketingAPI", Version = "v1" });
@@ -101,15 +122,12 @@ public class Program
 
             c.OperationFilter<AuthorizeCheckOperationFilter>();
         });
-
-        builder.WebHost.ConfigureKestrel(options => options.ListenAnyIP(8080));
-
-        // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+        
         builder.Services.AddOpenApi();
+        builder.WebHost.ConfigureKestrel(options => options.ListenAnyIP(8080));
 
         WebApplication app = builder.Build();
 
-        // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();

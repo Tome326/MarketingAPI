@@ -18,13 +18,13 @@ namespace MarketingAPI.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class SmsController(ApplicationDbContext context, ILogger<UsersController> logger, IConfiguration configuration) : ControllerBase
+public class SmsController(ApplicationDbContext context, ILogger<UsersController> logger, TwilioSettings twilioSettings) : ControllerBase
 {
     string? accountSsid;
     string? authToken;
     private readonly ApplicationDbContext _context = context;
     private readonly ILogger<UsersController> _logger = logger;
-    private readonly IConfiguration _configuration = configuration;
+    private readonly TwilioSettings _twilioSettings = twilioSettings;
 
     /// <summary>
     /// Sends a message to a single recipient.
@@ -36,15 +36,9 @@ public class SmsController(ApplicationDbContext context, ILogger<UsersController
     {
         try
         {
-            string? accountSid = _configuration["Twilio:AccountSid"];
-            string? authToken = _configuration["Twilio:AuthToken"];
-            string? fromNumber = _configuration["Twilio:PhoneNumber"];
-
-            TwilioClient.Init(accountSid, authToken);
-
             MessageResource message = await MessageResource.CreateAsync(
                 to: new PhoneNumber(request.Recipient),
-                from: new PhoneNumber(fromNumber),
+                from: new PhoneNumber(_twilioSettings.PhoneNumber),
                 body: request.Message
             );
 
@@ -87,11 +81,6 @@ public class SmsController(ApplicationDbContext context, ILogger<UsersController
 
         try
         {
-            string? accountSid = _configuration["Twilio:AccountSid"];
-            string? authToken = _configuration["Twilio:AuthToken"];
-            string? messagingServiceSid = _configuration["Twilio:MessagingServiceSid"];
-
-            TwilioClient.Init(accountSid, authToken);
             List<MessageResult> results = [];
             foreach (Customer customer in customers)
             {
@@ -99,7 +88,7 @@ public class SmsController(ApplicationDbContext context, ILogger<UsersController
                 {
                     MessageResource message = await MessageResource.CreateAsync(
                         body: ResolveTemplate(dto.MessageTemplate, customer),
-                        messagingServiceSid: messagingServiceSid,
+                        messagingServiceSid: _twilioSettings.MessagingServiceSid,
                         to: new PhoneNumber(customer.PhoneNumber)
                     );
 
