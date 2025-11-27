@@ -14,15 +14,9 @@ public class ApplicationDbContext : DbContext
     /// <param name="options"></param>
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-    /// <summary>
-    /// 
-    /// </summary>
     public DbSet<User> Users { get; set; }
-
-    /// <summary>
-    /// 
-    /// </summary>
     public DbSet<Customer> Customers { get; set; }
+    public DbSet<Occasion> Occasions { get; set; }
 
     /// <summary>
     /// 

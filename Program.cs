@@ -127,7 +127,7 @@ public class Program
         });
         
         builder.Services.AddOpenApi();
-        builder.WebHost.ConfigureKestrel(options => options.ListenAnyIP(8080));
+        //builder.WebHost.ConfigureKestrel(options => options.ListenAnyIP(8080));
 
         WebApplication app = builder.Build();
 
