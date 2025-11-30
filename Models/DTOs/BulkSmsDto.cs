@@ -2,7 +2,7 @@ using Twilio.AspNet.Common;
 
 namespace MarketingAPI.Models.DTOs;
 
-public class BulkSmsDto : SmsRequest
+public class BulkSmsDto
 {
     /// <summary>
     /// The formatted string for the message. Formatted as "Hi {name}, we are having a party on Friday!"

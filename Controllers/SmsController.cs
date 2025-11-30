@@ -23,8 +23,6 @@ namespace MarketingAPI.Controllers;
 [Authorize]
 public class SmsController(ApplicationDbContext context, ILogger<UsersController> logger, TwilioSettings twilioSettings) : ControllerBase
 {
-    string? accountSsid;
-    string? authToken;
     private readonly ApplicationDbContext _context = context;
     private readonly ILogger<UsersController> _logger = logger;
     private readonly TwilioSettings _twilioSettings = twilioSettings;
